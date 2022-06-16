@@ -1,100 +1,92 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import CalcButton from "./components/CalcButton";
 import CalcText from "./components/CalcText";
 import Calculation from "./components/Calculation";
 
+// Calculator types
 export type operation = "+" | "-" | "x" | undefined;
-
-export type memory = {
+export type input = {
   value: number;
   operation: operation;
-}[];
+};
+export type memory = input[];
 
 export default function Calculator() {
+  const defaultInput = { value: 0, operation: undefined };
   const [memory, setMemory] = useState<memory>([]);
-  const [input, setInput] = useState(0);
-  const [operation, setOperation] = useState<operation>(undefined);
+  const [input, setInput] = useState<input>(defaultInput);
   const [solution, setSolution] = useState<number>(0);
 
+  // Number buttons
   const enterNumber = (number: number) => {
-    setInput(input * 10 + number);
+    setInput({
+      ...input,
+      value: input.value * 10 + number,
+    });
   };
-
-  const performOperation = (op: operation) => {
+  // +, - and * buttons
+  const performOperation = (operation: operation) => {
     // Switch operation if input is 0
-    if (input === 0) {
-      setOperation(op);
+    if (input.value === 0) {
+      setInput({ ...input, operation: operation });
       return;
     }
-
-    setMemory(memory.concat({ value: input, operation: operation }));
-    setOperation(op);
-    setInput(0);
+    setMemory(memory.concat(input));
+    setInput({ value: 0, operation: operation });
   };
-
-  const reset = () => {
-    setInput(0);
-    setOperation(undefined);
+  // Clear input
+  const C = () => setInput({ ...input, value: 0 });
+  // Clear input and memory
+  const AC = () => {
     setMemory([]);
+    setInput(defaultInput);
   };
 
   // Calculate solution when the input changes
   useEffect(() => {
     let sum = 0;
-    memory.concat({ operation: operation, value: input }).forEach((m) => {
+    memory.concat(input).forEach((m) => {
       if (m.operation === undefined) sum = m.value;
       if (m.operation === "+") sum = sum + m.value;
       if (m.operation === "-") sum = sum - m.value;
       if (m.operation === "x") sum = sum * m.value;
     });
     setSolution(sum);
-  }, [input, operation]);
+  }, [input]);
 
   return (
     <View style={styles.container}>
-      <View style={styles.display}>
-        {memory.length > 0 && (
-          <Calculation
-            memory={memory}
-            operation={operation}
-            input={input}
-            solution={solution}
-          />
-        )}
+      <View style={styles.screen}>
+        <Calculation memory={memory} input={input} solution={solution} />
         <CalcText
-          style={{
-            textAlign: "right",
-            marginTop: "auto",
-            fontWeight: "bold",
-            fontSize: 60,
-          }}
-          text={operation ? operation + input : input}
+          style={styles.input}
+          text={input.operation ? input.operation + input.value : input.value}
         />
       </View>
-      <View style={styles.calcRow}>
+      <View style={styles.keyboardRow}>
         <CalcButton onPress={() => enterNumber(1)} text="1" />
         <CalcButton onPress={() => enterNumber(2)} text="2" />
         <CalcButton onPress={() => enterNumber(3)} text="3" />
         <CalcButton onPress={() => performOperation("x")} text="*" />
       </View>
-      <View style={styles.calcRow}>
+      <View style={styles.keyboardRow}>
         <CalcButton onPress={() => enterNumber(4)} text="4" />
         <CalcButton onPress={() => enterNumber(5)} text="5" />
         <CalcButton onPress={() => enterNumber(6)} text="6" />
         <CalcButton onPress={() => performOperation("-")} text="-" />
       </View>
-      <View style={styles.calcRow}>
+      <View style={styles.keyboardRow}>
         <CalcButton onPress={() => enterNumber(7)} text="7" />
         <CalcButton onPress={() => enterNumber(8)} text="8" />
         <CalcButton onPress={() => enterNumber(9)} text="9" />
         <CalcButton onPress={() => performOperation("+")} text="+" />
       </View>
-      <View style={styles.calcRow}>
+      <View style={styles.keyboardRow}>
         <CalcButton onPress={() => {}} text="" />
         <CalcButton onPress={() => enterNumber(0)} text="0" />
-        <CalcButton onPress={() => reset()} text="AC" />
-        <CalcButton onPress={() => setInput(0)} text="C" />
+        <CalcButton onPress={() => AC()} text="AC" />
+        <CalcButton onPress={() => C()} text="C" />
       </View>
     </View>
   );
@@ -105,17 +97,20 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 5,
   },
-  display: {
+  screen: {
     flex: 1,
     margin: 5,
     padding: 20,
     borderRadius: 10,
     backgroundColor: "#fff",
   },
-  displayText: {
-    fontSize: 40,
+  input: {
+    textAlign: "right",
+    marginTop: "auto",
+    fontWeight: "bold",
+    fontSize: 60,
   },
-  calcRow: {
+  keyboardRow: {
     flexDirection: "row",
   },
 });

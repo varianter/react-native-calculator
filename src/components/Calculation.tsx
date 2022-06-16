@@ -1,35 +1,38 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { memory, operation } from "../Calculator";
+import { StyleSheet, View } from "react-native";
+import { input, memory } from "../Calculator";
 import CalcText from "./CalcText";
 
 export type CalculationProps = {
   memory: memory;
-  operation: operation;
-  input: number;
+  input: input;
   solution: number;
 };
 
 export default function Calculation({
   memory,
-  operation,
   input,
   solution,
 }: CalculationProps) {
   return (
     <View style={styles.container}>
+      {/* Memory */}
       {memory.map((m, index) => (
-        <View key={index} style={styles.container}>
-          <CalcText style={styles.faded} text={m.operation || ""} />
-          <CalcText style={styles.faded} text={m.value} />
-        </View>
+        <CalcText key={index} style={styles.faded} text={inputToText(m)} />
       ))}
-      <CalcText style={styles.bold} text={operation || ""} />
-      <CalcText style={styles.bold} text={input} />
+
+      {/* Current input */}
+      <CalcText style={styles.bold} text={inputToText(input)} />
+
+      {/* Solution */}
       <CalcText style={styles.faded} text="=" />
       <CalcText text={solution} />
     </View>
   );
+}
+
+function inputToText(m: input) {
+  return m.operation ? m.operation + m.value : m.value;
 }
 
 const styles = StyleSheet.create({

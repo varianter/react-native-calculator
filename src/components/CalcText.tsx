@@ -1,15 +1,9 @@
 import React from "react";
-import {
-  StyleProp,
-  StyleSheet,
-  Text,
-  TextStyle,
-  ViewStyle,
-} from "react-native";
+import { StyleProp, StyleSheet, Text, TextStyle } from "react-native";
 
 export type CalcTextProps = {
   text: string | number;
-  style?: TextStyle;
+  style?: StyleProp<TextStyle>;
 };
 
 export default function CalcText({ text, style }: CalcTextProps) {
