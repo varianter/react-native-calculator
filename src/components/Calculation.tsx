@@ -18,16 +18,14 @@ export default function Calculation({
 }: CalculationProps) {
   return (
     <View style={styles.container}>
-      {memory.map((m) => (
-        <>
+      {memory.map((m, index) => (
+        <View key={index} style={styles.container}>
           <CalcText style={styles.faded} text={m.operation || ""} />
           <CalcText style={styles.faded} text={m.value} />
-        </>
+        </View>
       ))}
-      <>
-        <CalcText style={styles.bold} text={operation || ""} />
-        <CalcText style={styles.bold} text={input} />
-      </>
+      <CalcText style={styles.bold} text={operation || ""} />
+      <CalcText style={styles.bold} text={input} />
       <CalcText style={styles.faded} text="=" />
       <CalcText text={solution} />
     </View>

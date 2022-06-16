@@ -22,6 +22,12 @@ export default function Calculator() {
   };
 
   const performOperation = (op: operation) => {
+    // Switch operation if input is 0
+    if (input === 0) {
+      setOperation(op);
+      return;
+    }
+
     setMemory(memory.concat({ value: input, operation: operation }));
     setOperation(op);
     setInput(0);
@@ -33,6 +39,7 @@ export default function Calculator() {
     setMemory([]);
   };
 
+  // Calculate solution when the input changes
   useEffect(() => {
     let sum = 0;
     memory.concat({ operation: operation, value: input }).forEach((m) => {
@@ -42,7 +49,7 @@ export default function Calculator() {
       if (m.operation === "x") sum = sum * m.value;
     });
     setSolution(sum);
-  }, [memory, input]);
+  }, [input, operation]);
 
   return (
     <View style={styles.container}>
@@ -69,25 +76,25 @@ export default function Calculator() {
         <CalcButton onPress={() => enterNumber(1)} text="1" />
         <CalcButton onPress={() => enterNumber(2)} text="2" />
         <CalcButton onPress={() => enterNumber(3)} text="3" />
-        <CalcButton onPress={() => {}} text="" />
+        <CalcButton onPress={() => performOperation("x")} text="*" />
       </View>
       <View style={styles.calcRow}>
         <CalcButton onPress={() => enterNumber(4)} text="4" />
         <CalcButton onPress={() => enterNumber(5)} text="5" />
         <CalcButton onPress={() => enterNumber(6)} text="6" />
-        <CalcButton onPress={() => {}} text="" />
+        <CalcButton onPress={() => performOperation("-")} text="-" />
       </View>
       <View style={styles.calcRow}>
         <CalcButton onPress={() => enterNumber(7)} text="7" />
         <CalcButton onPress={() => enterNumber(8)} text="8" />
         <CalcButton onPress={() => enterNumber(9)} text="9" />
-        <CalcButton onPress={() => performOperation("x")} text="*" />
+        <CalcButton onPress={() => performOperation("+")} text="+" />
       </View>
       <View style={styles.calcRow}>
-        <CalcButton onPress={() => performOperation("+")} text="+" />
-        <CalcButton onPress={() => performOperation("-")} text="-" />
+        <CalcButton onPress={() => {}} text="" />
         <CalcButton onPress={() => enterNumber(0)} text="0" />
-        <CalcButton onPress={() => reset()} text="C" />
+        <CalcButton onPress={() => reset()} text="AC" />
+        <CalcButton onPress={() => setInput(0)} text="C" />
       </View>
     </View>
   );
