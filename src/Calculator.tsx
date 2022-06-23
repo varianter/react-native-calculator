@@ -85,8 +85,12 @@ export default function Calculator() {
       <View style={styles.keyboardRow}>
         <CalcButton onPress={() => {}} text="" />
         <CalcButton onPress={() => enterNumber(0)} text="0" />
-        <CalcButton onPress={() => AC()} text="AC" />
-        <CalcButton onPress={() => C()} text="C" />
+        {input.value === 0 ? (
+          <CalcButton onPress={() => AC()} text="AC" />
+        ) : (
+          <CalcButton onPress={() => C()} text="C" />
+        )}
+        <CalcButton onPress={() => {}} text="" />
       </View>
     </View>
   );
