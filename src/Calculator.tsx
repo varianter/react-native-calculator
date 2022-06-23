@@ -3,6 +3,8 @@ import { StyleSheet, View } from "react-native";
 import CalcButton from "./components/CalcButton";
 import CalcText from "./components/CalcText";
 import Calculation from "./components/Calculation";
+import { Accelerometer } from "expo-sensors";
+import { Subscription } from "expo-sensors/build/Pedometer";
 
 // Calculator types
 export type operation = "+" | "-" | "x" | undefined;
@@ -13,6 +15,27 @@ export type input = {
 export type memory = input[];
 
 export default function Calculator() {
+  const [data, setData] = useState({ x: 0, y: 0, z: 0 });
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const { x, y, z } = data;
+
+  const _subscribe = () => {
+    setSubscription(
+      Accelerometer.addListener((accelerometerData) => {
+        setData(accelerometerData);
+      })
+    );
+  };
+  const _unsubscribe = () => {
+    subscription && subscription.remove();
+    setSubscription(null);
+  };
+  useEffect(() => {
+    _subscribe();
+    Accelerometer.setUpdateInterval(100);
+    return () => _unsubscribe();
+  }, []);
+
   const defaultInput = { value: 0, operation: undefined };
   const [memory, setMemory] = useState<memory>([]);
   const [input, setInput] = useState<input>(defaultInput);
@@ -63,6 +86,18 @@ export default function Calculator() {
           style={styles.input}
           text={input.operation ? input.operation + input.value : input.value}
         />
+        <CalcText
+          style={{ opacity: Math.abs(x) }}
+          text={"X" + x.toFixed(3)}
+        ></CalcText>
+        <CalcText
+          style={{ opacity: Math.abs(y) }}
+          text={"Y" + y.toFixed(3)}
+        ></CalcText>
+        <CalcText
+          style={{ opacity: Math.abs(z) }}
+          text={"Z" + z.toFixed(3)}
+        ></CalcText>
       </View>
       <View style={styles.keyboardRow}>
         <CalcButton onPress={() => enterNumber(1)} text="1" />
